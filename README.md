@@ -959,7 +959,7 @@ for i in range(0, 20):
     # Split, once again, the data
     splitEveryTime()
 
-    # Grid Search (Fuck mit 🖖)
+    # Grid Search
     knn = getBestKNN() 
     dtc = getBestDTC()
     nbc  = getBestNBC()
