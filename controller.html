@@ -14262,6 +14262,12 @@ a.anchor-link {
 <h1 align="center">Trabalho 2 - Aprendizagem de Máquina</h1><h2 id="Andre-Brun">Andre Brun<a class="anchor-link" href="#Andre-Brun">&#182;</a></h2><h3 id="Daniel-Boll-&amp;-Mateus-Karvat">Daniel Boll &amp; Mateus Karvat<a class="anchor-link" href="#Daniel-Boll-&amp;-Mateus-Karvat">&#182;</a></h3><hr>
 
 </div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Inicialmente, importamos as bibliotecas necessárias.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14273,22 +14279,25 @@ a.anchor-link {
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LinearLocator</span><span class="p">,</span> <span class="n">FormatStrFormatter</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">style</span><span class="p">,</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.tri</span> <span class="k">as</span> <span class="nn">mtri</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
-
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="c1"># Analitics</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">silhouette_score</span><span class="p">,</span> <span class="n">pairwise_distances</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">distance</span>
 
 <span class="c1"># Clusters</span>
 <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
 <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
 <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">AgglomerativeClustering</span>
 
+<span class="c1"># Configurations</span>
 <span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
 <span class="o">%</span><span class="k">matplotlib</span> qt
-<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.precision&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14296,6 +14305,12 @@ a.anchor-link {
 </div>
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Em seguida, carregamos a base de dados.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14314,6 +14329,12 @@ a.anchor-link {
 </div>
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Separando as coordenadas x e y das labels nas variáveis <strong><em>X</em></strong> e <strong><em>label</em></strong>.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14322,7 +14343,6 @@ a.anchor-link {
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
 <span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="c1"># X = StandardScaler().fit_transform(X)</span>
 </pre></div>
 
      </div>
@@ -14330,6 +14350,12 @@ a.anchor-link {
 </div>
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Após carregar a base e separá-la, plotamos o <em>dataset</em> com as cores verde para a primeira classe e vermelha para a segunda.</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14350,8 +14376,10 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<hr>
-<h2 id="Met&#243;dos-de-avalia&#231;&#227;o-(non-built-in)">Met&#243;dos de avalia&#231;&#227;o (non-built-in)<a class="anchor-link" href="#Met&#243;dos-de-avalia&#231;&#227;o-(non-built-in)">&#182;</a></h2>
+<div align="center">
+    <img src="./images/dataset_plot.png" width=300/>
+</div><p>a</p>
+
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14359,92 +14387,13 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">cohesion_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    N - N dentro de uma mesma label</span>
-<span class="sd">    pra cada label</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">each_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">each_label</span><span class="p">:</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">lab</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">---</span>
+<span class="c1">## Metricas de avaliação </span>
 
-        <span class="n">subX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">total</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pairwise_distances</span><span class="p">(</span><span class="n">subX</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;sqeuclidean&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">total</span>
-</pre></div>
+<span class="n">Funções</span> <span class="n">implementadas</span> <span class="n">por</span> <span class="n">nós</span> <span class="n">para</span> <span class="k">as</span> <span class="n">métricas</span> <span class="n">de</span> <span class="n">avaliação</span> <span class="n">não</span> <span class="n">implementadas</span> <span class="n">pelas</span> <span class="n">bibliotecas</span> <span class="n">utilizadas</span><span class="o">.</span> <span class="n">A</span> <span class="n">métrica</span> <span class="n">de</span> <span class="n">Silhueta</span> <span class="n">é</span> <span class="n">utilizada</span> <span class="n">a</span> <span class="n">partir</span> <span class="n">de</span> <span class="n">função</span> <span class="n">pré</span><span class="o">-</span><span class="n">pronta</span> <span class="n">do</span> <span class="n">SciKit</span> <span class="n">Learn</span><span class="o">.</span>
 
-     </div>
-</div>
-</div>
-</div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">separation_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    N - M</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">each_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">each_label</span><span class="p">:</span>
-        <span class="n">indices_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">lab</span><span class="p">)</span>
-        <span class="n">indices_x</span> <span class="o">=</span> <span class="n">indices_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">indices_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels</span> <span class="o">!=</span> <span class="n">lab</span><span class="p">)</span>
-        <span class="n">indices_y</span> <span class="o">=</span> <span class="n">indices_y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        
-        <span class="n">subX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">indices_x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">subY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">indices_y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">total</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pairwise_distances</span><span class="p">(</span><span class="n">subX</span><span class="p">,</span> <span class="n">subY</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;sqeuclidean&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">total</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">entropy_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">label_class</span><span class="p">,</span> <span class="n">label_dataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        banana 🍌</span>
-<span class="sd">        B1 = label_dataset == 1</span>
-<span class="sd">        B2 = label_dataset == 0</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cluster_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">label_dataset</span><span class="p">)</span>
-    <span class="n">total_entropy</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">cluster_labels</span><span class="p">:</span>
-        <span class="n">cluster_entropy</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Cluster indices tem o índice</span>
-        <span class="c1"># de uma banana (dataset original)</span>
-        <span class="n">cluster_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">label_dataset</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span>
-        <span class="n">cluster_indices</span> <span class="o">=</span> <span class="n">cluster_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c1"># Tem todas as instâncias da label_class</span>
-        <span class="c1"># dentro da banana atual (cluster_indices)</span>
-        <span class="n">cluster_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">label_class</span><span class="p">,</span> <span class="n">cluster_indices</span><span class="p">)</span>
-        <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_classes</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">:</span>
-            <span class="n">cluster_entropy</span> <span class="o">+=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-
-        <span class="n">total_entropy</span> <span class="o">+=</span> <span class="n">cluster_entropy</span>
-
-        <span class="n">total_entropy</span> <span class="o">/=</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster_labels</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">total_entropy</span>
+<span class="c1">### Coesão</span>
 </pre></div>
 
      </div>
@@ -14455,7 +14404,123 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<hr>
+<p>def cohesion_score(X, labels):
+    """
+    N - N dentro de uma mesma label
+    pra cada label definida pelo classificador
+    """
+    each_label = np.unique(labels)
+    total = 0</p>
+
+<pre><code># para cada label, obtemos a matriz subX, que contém as coordenadas dos pontos daquelas labels
+for lab in each_label:
+    if lab != -1:
+        indices = np.where(labels == lab)
+        indices = indices[0]
+        subX = np.take(X, indices, axis=0)
+
+        # verificamos a distância euclidiana entre todos os pares de pontos em subX
+        total += np.sum(pairwise_distances(subX, metric='sqeuclidean', n_jobs=-1))
+
+# a fim de reduzir a dimensão do resultado, retornarmos sua raiz quadrada
+return np.sqrt(total)</code></pre>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### Separação</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>def separation_score(X, labels):
+    """
+    N - M
+    """
+    each_label = np.unique(labels)
+    total = 0</p>
+
+<pre><code># assim como na coesão, obtemos a matriz subX com os pontos pertencentes a uma mesma label. Porém, aqui precisamos da matriz subY com os pontos pertencentes às demais labels.
+for lab in each_label:
+    if lab != -1:
+        indices_x = np.where(labels == lab)
+        indices_x = indices_x[0]
+
+        indices_y = np.where(np.logical_and(labels != lab, labels!=-1))
+        indices_y = indices_y[0]
+
+        subX = np.take(X, indices_x, axis=0)
+        subY = np.take(X, indices_y, axis=0)
+
+        # calculamos a distância entre os pontos de subX e os pontos de subY
+        total += np.sum(pairwise_distances(subX, subY, metric='sqeuclidean', n_jobs=-1))
+return np.sqrt(total)</code></pre>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### Entropia</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>def entropy_score(X, label_class, label_dataset):
+    """
+        banana 🍌
+        B1 = label_dataset == 1
+        B2 = label_dataset == 0
+    """
+    cluster_labels = np.unique(label_dataset)
+    total_entropy = 0
+    for label in cluster_labels:
+        cluster_entropy = 0</p>
+
+<pre><code>    # Cluster indices tem o índice
+    # de uma banana (dataset original)
+    cluster_indices = np.where(label_dataset == label)
+    cluster_indices = cluster_indices[0]
+
+    # Tem todas as instâncias da label_class
+    # dentro da banana atual (cluster_indices)
+    cluster_classes = np.take(label_class, cluster_indices)
+
+    # probs inicialmente armazena a quantidade de pontos com cada classificação e posteriormente é dividido pelo número de pontos naquele cluster, de modo a armazenar as probabilidades em cada cluster
+    classes, probs = np.unique(cluster_classes, return_counts=True)
+    cluster_sum = np.sum(probs)
+    if classes[0]==-1:
+        probs = probs[1:]
+    probs = probs / cluster_sum
+
+    # para cada p possível, calcula-se o elemento do somatório da entropia
+    for p in probs:
+        cluster_entropy += p * np.log2(p)
+
+    # a entropia daquele cluster é adicionada à entropia total (com sinal negativo)
+    total_entropy -= cluster_entropy
+
+# é feita a média das entropias
+total_entropy /= len(cluster_labels)
+return total_entropy</code></pre>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -14464,23 +14529,8 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plotScore3D</span><span class="p">(</span><span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">,</span> <span class="n">zp</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
-
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">zp</span>
-
-    <span class="n">surf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">coolwarm</span><span class="p">,</span>
-                        <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        
-    <span class="c1"># ax.set_zlim(0.39, 0.49)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">LinearLocator</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">FormatStrFormatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.02f</span><span class="s1">&#39;</span><span class="p">))</span>
-    <span class="c1"># Add a color bar which maps values to colors.</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">surf</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">---</span>
+<span class="c1">## Função para plotar gráficos tridimensionais</span>
 </pre></div>
 
      </div>
@@ -14491,8 +14541,26 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<hr>
-<h2 id="KMeans">KMeans<a class="anchor-link" href="#KMeans">&#182;</a></h2>
+<p>def plotScore3D(xp, yp, zp, title, x_axis_name, y_axis_name):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')</p>
+
+<pre><code>x, y = np.meshgrid(xp, yp)
+z = zp
+
+surf = ax.plot_surface(y, x, z, cmap=cm.coolwarm,
+                    linewidth=0, antialiased=True)           
+
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+ax.set_xlabel(x_axis_name)
+ax.set_ylabel(y_axis_name)
+
+# Adiciona um colorbar que mapeia os valores para diferentes cores
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.title(title)
+plt.show()</code></pre>
+
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14500,37 +14568,537 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kmc_parameters</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;n_clusters&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">)],</span>
-    <span class="s2">&quot;max_iter&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
-<span class="p">}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">---</span>
 
-<span class="n">cluster_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">iter_size</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1">## KMeans</span>
 
-<span class="n">kmc_score_matrix_cohesion</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">iter_size</span><span class="p">))</span>
-<span class="n">kmc_score_matrix_separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">iter_size</span><span class="p">))</span>
-<span class="n">kmc_score_matrix_entropy</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">iter_size</span><span class="p">))</span>
-<span class="n">kmc_score_matrix_silhouette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">iter_size</span><span class="p">))</span>
+<span class="n">Para</span> <span class="n">o</span> <span class="n">classificador</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">os</span> <span class="n">parâmetros</span> <span class="n">testados</span> <span class="n">são</span><span class="p">:</span>
+<span class="o">*</span> <span class="n">Número</span> <span class="n">de</span> <span class="n">centróides</span> <span class="p">(</span><span class="n">variável</span> <span class="s2">&quot;n_clusters&quot;</span><span class="p">)</span> <span class="n">variando</span> <span class="n">de</span> <span class="mi">2</span> <span class="n">a</span> <span class="mi">8</span>
+<span class="o">*</span> <span class="n">Número</span> <span class="n">de</span> <span class="n">iterações</span> <span class="n">para</span> <span class="n">convergências</span> <span class="p">(</span><span class="n">variável</span> <span class="s2">&quot;max_iter&quot;</span><span class="p">)</span> <span class="n">variando</span> <span class="n">de</span> <span class="mi">1</span> <span class="n">a</span> <span class="mi">10</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="o-dicion&#225;rio-kmc_parameters-armazena-os-poss&#237;veis-valores-de-par&#226;metros-para-o-classificador">o dicion&#225;rio kmc_parameters armazena os poss&#237;veis valores de par&#226;metros para o classificador<a class="anchor-link" href="#o-dicion&#225;rio-kmc_parameters-armazena-os-poss&#237;veis-valores-de-par&#226;metros-para-o-classificador">&#182;</a></h1><p>kmc_parameters = {
+    "n_clusters": [i for i in range(2, 9)],
+    "max_iter": [j for j in range(1, 11)]
+}</p>
+<h1 id="as-vari&#225;veis-com-sufixo-&quot;_size&quot;-aramazenam-o-tamanho-dos-vetores-no-dicion&#225;rio">as vari&#225;veis com sufixo "_size" aramazenam o tamanho dos vetores no dicion&#225;rio<a class="anchor-link" href="#as-vari&#225;veis-com-sufixo-&quot;_size&quot;-aramazenam-o-tamanho-dos-vetores-no-dicion&#225;rio">&#182;</a></h1><p>cluster_size = np.shape(kmc_parameters['n_clusters'])[0]
+iter_size    = np.shape(kmc_parameters['max_iter'])[0]</p>
+<h1 id="com-as-vari&#225;veis-de-sufixo-&quot;_size&quot;,-criamos-as-matrizes-que-armazenar&#227;o-a-pontua&#231;&#227;o-do-classificador-para-todas-as-poss&#237;veis-combina&#231;&#245;es-de-par&#226;metros-conforme-as-diferentes-m&#233;tricas-de-avalia&#231;&#227;o">com as vari&#225;veis de sufixo "_size", criamos as matrizes que armazenar&#227;o a pontua&#231;&#227;o do classificador para todas as poss&#237;veis combina&#231;&#245;es de par&#226;metros conforme as diferentes m&#233;tricas de avalia&#231;&#227;o<a class="anchor-link" href="#com-as-vari&#225;veis-de-sufixo-&quot;_size&quot;,-criamos-as-matrizes-que-armazenar&#227;o-a-pontua&#231;&#227;o-do-classificador-para-todas-as-poss&#237;veis-combina&#231;&#245;es-de-par&#226;metros-conforme-as-diferentes-m&#233;tricas-de-avalia&#231;&#227;o">&#182;</a></h1><p>kmc_score_matrix_cohesion   = np.zeros((cluster_size, iter_size))
+kmc_score_matrix_separation = np.zeros((cluster_size, iter_size))
+kmc_score_matrix_entropy    = np.zeros((cluster_size, iter_size))
+kmc_score_matrix_silhouette = np.zeros((cluster_size, iter_size))</p>
+<h1 id="iteramos-por-todas-as-poss&#237;veis-combina&#231;&#245;es-dos-par&#226;metros">iteramos por todas as poss&#237;veis combina&#231;&#245;es dos par&#226;metros<a class="anchor-link" href="#iteramos-por-todas-as-poss&#237;veis-combina&#231;&#245;es-dos-par&#226;metros">&#182;</a></h1><p>i = 0
+j = 0
+for n_cluster in kmc_parameters["n_clusters"]:
+    j = 0
+    for iteration in kmc_parameters["max_iter"]:
+        kmc = KMeans(n_clusters=n_cluster, max_iter=iteration).fit(X)
+        kmc<em>labels = kmc.labels</em></p>
+
+<pre><code>    # as funções que retornam as métricas de avaliação são chamadas
+    cohesion    = cohesion_score(X, kmc_labels)
+    separation  = separation_score(X, kmc_labels)
+    entropy     = entropy_score(X, kmc_labels, label)
+    silhouette  = silhouette_score(X, kmc_labels, metric='euclidean')
+
+    # a pontuação de cada métrica de avaliação é armazenada em sua matriz correspondente
+    kmc_score_matrix_cohesion[i, j]     = cohesion
+    kmc_score_matrix_separation[i, j]   = separation
+    kmc_score_matrix_entropy[i, j]      = entropy
+    kmc_score_matrix_silhouette[i, j]   = silhouette
+
+    j += 1
+i += 1</code></pre>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Plotamos</span> <span class="n">gráficos</span> <span class="n">tridimensionais</span> <span class="n">para</span> <span class="n">cada</span> <span class="n">métrica</span> <span class="n">de</span> <span class="n">avaliação</span> <span class="n">a</span> <span class="n">fim</span> <span class="n">de</span> <span class="n">avaliar</span> <span class="n">o</span> <span class="n">comportamento</span> <span class="n">de</span> <span class="n">cada</span> <span class="n">métrica</span> <span class="n">conforme</span> <span class="n">os</span> <span class="n">parâmetros</span> <span class="n">do</span> <span class="n">classificador</span> <span class="n">são</span> <span class="n">modificados</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>plotScore3D(kmc_parameters['max_iter'], kmc_parameters['n_clusters'], kmc_score_matrix_cohesion, "KMeans - Coesão\n(menor = melhor)", "Centroides", "Iterações")</p>
+<p>plotScore3D(kmc_parameters['max_iter'], kmc_parameters['n_clusters'], kmc_score_matrix_separation, "KMeans - Separação\n(maior = melhor)", "Centroides", "Iterações")</p>
+<p>plotScore3D(kmc_parameters['max_iter'], kmc_parameters['n_clusters'], kmc_score_matrix_entropy, "KMeans - Entropia\n(menor = melhor)", "Centroides", "Iterações")</p>
+<p>plotScore3D(kmc_parameters['max_iter'], kmc_parameters['n_clusters'], kmc_score_matrix_silhouette, "KMeans - Silhueta\n(maior = melhor)", "Centroides", "Iterações")</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/kmeans_cohesion.png" width=300/> </td>
+            <td> <img src="./images/kmeans_separation.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/kmeans_entropy.png" width=300/> </td>
+            <td> <img src="./images/kmeans_silhouette.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="n">fim</span> <span class="n">de</span> <span class="n">verificar</span> <span class="n">quais</span> <span class="n">são</span> <span class="n">os</span> <span class="n">melhores</span> <span class="n">valores</span><span class="p">,</span> <span class="n">estes</span> <span class="n">são</span> <span class="n">exibidos</span> <span class="n">abaixo</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>KMEANS
+----------------------------------------------------------------------
+COESÃO:
+A melhor pontuação (277.81230390754223) foi obtida pelos parâmetros:
+ 9 iterações e 8 centroides.
+SEPARAÇÃO:
+A melhor pontuação (2862.928241149436) foi obtida pelos parâmetros:
+ 9 iterações e 8 centroides.
+ENTROPIA:
+A melhor pontuação (0.7788808813494354) foi obtida pelos parâmetros:
+ 1 iterações e 2 centroides.
+SILHUETA:
+A melhor pontuação (0.47532536449146784) foi obtida pelos parâmetros:
+ 1 iterações e 2 centroides.
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">Definimos o tamanho das matrizes que armazenam as pontua&#231;&#245;es<a class="anchor-link" href="#Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">&#182;</a></h1><p>template_shape      = np.shape(kmc_score_matrix_cohesion)</p>
+<h1 id="Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">Para cada m&#233;todo de avalia&#231;&#227;o, definimos a melhor pontua&#231;&#227;o para aquele m&#233;todo.<a class="anchor-link" href="#Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">&#182;</a></h1><h1 id="Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">Para Separa&#231;&#227;o e Silhueta, as melhores pontua&#231;&#245;es s&#227;o as maiores.<a class="anchor-link" href="#Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">&#182;</a></h1><h1 id="J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">J&#225; para Coes&#227;o e Entropia, s&#227;o as menores.<a class="anchor-link" href="#J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">&#182;</a></h1><p>maxScore_cohesion_kmeans   = np.min(kmc_score_matrix_cohesion)
+minScore_separation_kmeans = np.max(kmc_score_matrix_separation)
+minScore_entropy_kmeans    = np.min(kmc_score_matrix_entropy)
+maxScore_silhouette_kmeans = np.max(kmc_score_matrix_silhouette)</p>
+<h1 id="Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">Identificada a melhor pontua&#231;&#227;o, acessamos seu &#237;ndice na matriz de pontua&#231;&#245;es para definir quais par&#226;metros o originaram<a class="anchor-link" href="#Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">&#182;</a></h1><p>index_cohesion   = np.unravel_index(np.argmin(kmc_score_matrix_cohesion), template_shape)
+index_separation = np.unravel_index(np.argmax(kmc_score_matrix_separation), template_shape)
+index_entropy    = np.unravel_index(np.argmin(kmc_score_matrix_entropy), template_shape)
+index_silhouette = np.unravel_index(np.argmax(kmc_score_matrix_silhouette), template_shape)</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">DETERMINA MELHORES PAR&#194;METROS PARA CADA M&#201;TRICA DE AVALIA&#199;&#195;O<a class="anchor-link" href="#DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>bestIter_cohesion   = kmc_parameters['max_iter'][index_cohesion[1]]
+bestN_cohesion      = kmc_parameters['n_clusters'][index_cohesion[0]]</p>
+<p>bestIter_separation = kmc_parameters['max_iter'][index_separation[1]]
+bestN_separation    = kmc_parameters['n_clusters'][index_separation[0]]</p>
+<p>bestIter_entropy    = kmc_parameters['max_iter'][index_entropy[1]]
+bestN_entropy       = kmc_parameters['n_clusters'][index_entropy[0]]</p>
+<p>bestIter_silhouette = kmc_parameters['max_iter'][index_silhouette[1]]
+bestN_silhouette    = kmc_parameters['n_clusters'][index_silhouette[0]]</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>print("KMEANS")
+print("-"*70)</p>
+<h1 id="Coes&#227;o">Coes&#227;o<a class="anchor-link" href="#Coes&#227;o">&#182;</a></h1><p>print(f"COESÃO:\nA melhor pontuação ({maxScore_cohesion_kmeans}) foi obtida pelos parâmetros:\n {bestIter_cohesion} iterações e {bestN_cohesion} centroides.")</p>
+<h1 id="Separa&#231;&#227;o">Separa&#231;&#227;o<a class="anchor-link" href="#Separa&#231;&#227;o">&#182;</a></h1><p>print(f"SEPARAÇÃO:\nA melhor pontuação ({minScore_separation_kmeans}) foi obtida pelos parâmetros:\n {bestIter_separation} iterações e {bestN_separation} centroides.")</p>
+<h1 id="Entropia">Entropia<a class="anchor-link" href="#Entropia">&#182;</a></h1><p>print(f"ENTROPIA:\nA melhor pontuação ({minScore_entropy_kmeans}) foi obtida pelos parâmetros:\n {bestIter_entropy} iterações e {bestN_entropy} centroides.")</p>
+<h1 id="Silhueta">Silhueta<a class="anchor-link" href="#Silhueta">&#182;</a></h1><p>print(f"SILHUETA:\nA melhor pontuação ({maxScore_silhouette_kmeans}) foi obtida pelos parâmetros:\n {bestIter_silhouette} iterações e {bestN_silhouette} centroides.")</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A partir dos gráficos gerados e dos resultados exibidos, pode-se observar, no caso do KMeans, que:</p>
+<ul>
+<li>Coesão e Separação apresentam comportamentos bastante semelhantes em seus gráficos;</li>
+<li>A Entropia apresenta comportamento também similar à Coesão e Separação, mas tem seu maior valor com parâmetros diferentes daqueles da Coesão e Separação;</li>
+<li>O classificador converge rapidamente, de modo que, no eixo gráfico correspondente ao número de iterações, nota-se pouca variação, com exceção apenas da Silhueta;</li>
+<li>Apesar das variações, as diferentes métricas de avaliação têm parâmetros bastante similares para seus melhores valores.</li>
+</ul>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">---</span>
+<span class="c1">## DBScan</span>
+
+<span class="n">Para</span> <span class="n">o</span> <span class="n">classificador</span> <span class="n">DBScan</span><span class="p">,</span> <span class="n">os</span> <span class="n">parâmetros</span> <span class="n">testados</span> <span class="n">são</span><span class="p">:</span>
+<span class="o">*</span> <span class="n">Tamanho</span> <span class="n">do</span> <span class="n">raio</span> <span class="n">adotado</span> <span class="p">(</span><span class="n">variável</span> <span class="s2">&quot;eps&quot;</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">Número</span> <span class="n">mínimo</span> <span class="n">de</span> <span class="n">pontos</span> <span class="p">(</span><span class="n">variável</span> <span class="s2">&quot;min_samples&quot;</span><span class="p">)</span>
+
+<span class="n">Verificamos</span> <span class="n">que</span> <span class="n">o</span> <span class="n">intervalo</span> <span class="n">de</span> <span class="n">valores</span> <span class="n">possíveis</span> <span class="n">para</span> <span class="n">tais</span> <span class="n">parâmetros</span><span class="p">,</span> <span class="n">para</span> <span class="n">que</span> <span class="n">se</span> <span class="n">obtenha</span> <span class="n">um</span> <span class="n">resultado</span> <span class="n">minimamente</span> <span class="n">satisfatório</span> <span class="n">é</span> <span class="n">bastante</span> <span class="n">restrito</span><span class="o">.</span> <span class="n">Muitas</span> <span class="n">combinações</span> <span class="n">de</span> <span class="n">parâmetros</span> <span class="n">faziam</span> <span class="n">com</span> <span class="n">que</span> <span class="n">o</span> <span class="n">classificador</span> <span class="n">classificasse</span> <span class="n">todos</span> <span class="n">os</span> <span class="n">pontos</span> <span class="n">em</span> <span class="n">uma</span> <span class="n">mesma</span> <span class="n">classe</span> <span class="n">ou</span> <span class="n">criasse</span> <span class="n">um</span> <span class="n">número</span> <span class="n">excessivo</span> <span class="n">de</span> <span class="n">classes</span> <span class="p">(</span><span class="n">uma</span> <span class="n">combinação</span> <span class="n">testada</span> <span class="n">resultou</span> <span class="n">em</span> <span class="n">mais</span> <span class="n">de</span> <span class="mi">100</span> <span class="n">classes</span><span class="p">)</span><span class="o">.</span>
+
+<span class="n">Devido</span> <span class="n">a</span> <span class="n">isso</span><span class="p">,</span> <span class="n">delimitamos</span> <span class="k">as</span> <span class="n">combinações</span> <span class="n">de</span> <span class="n">parâmetros</span> <span class="n">possíveis</span> <span class="n">àquelas</span> <span class="n">nas</span> <span class="n">quais</span> <span class="n">o</span> <span class="n">número</span> <span class="n">total</span> <span class="n">de</span> <span class="n">classes</span> <span class="n">era</span> <span class="n">igual</span> <span class="n">ou</span> <span class="n">menor</span> <span class="n">a</span> <span class="mi">8</span> <span class="p">(</span><span class="n">um</span> <span class="n">número</span> <span class="n">já</span> <span class="n">considerado</span> <span class="n">grande</span><span class="p">,</span> <span class="n">tendo</span> <span class="n">em</span> <span class="n">vista</span> <span class="n">que</span> <span class="n">originalmente</span> <span class="n">tínhamos</span> <span class="n">apenas</span> <span class="mi">2</span> <span class="n">classes</span><span class="p">)</span> <span class="n">e</span> <span class="n">nos</span> <span class="n">quais</span> <span class="n">o</span> <span class="n">ponto</span> <span class="n">central</span> <span class="n">do</span> <span class="n">cluster</span> <span class="n">superior</span> <span class="n">tivesse</span> <span class="n">classe</span> <span class="n">distinta</span> <span class="n">do</span> <span class="n">ponto</span> <span class="n">central</span> <span class="n">da</span> <span class="n">banana</span> <span class="n">inferior</span> <span class="p">(</span><span class="n">assim</span> <span class="n">evitando</span> <span class="n">uma</span> <span class="n">classificação</span> <span class="n">igual</span> <span class="n">para</span> <span class="n">todos</span> <span class="n">os</span> <span class="n">pontos</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a variável banana_sup_index armazena a coordenada do ponto mais próximo à coordenada (0, 1), enquanto a variável banana_inf_index o faz para a coordenada (1, -0.5). Tais coordenadas foram selecionadas a partir da visualização do gráfico do dataset, selecionando o ponto central de cada &quot;banana&quot;</span>
+<span class="n">banana_sup_index</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[[</span><span class="o">.</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+<span class="n">banana_inf_index</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]])</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="dicion&#225;rio-contendo-os-par&#226;metros,-onde-eps-varia-de-0.01-a-0.15-e-min_samples-varia-de-3-a-13">dicion&#225;rio contendo os par&#226;metros, onde eps varia de 0.01 a 0.15 e min_samples varia de 3 a 13<a class="anchor-link" href="#dicion&#225;rio-contendo-os-par&#226;metros,-onde-eps-varia-de-0.01-a-0.15-e-min_samples-varia-de-3-a-13">&#182;</a></h1><p>dbs_parameters = {
+    "eps": [i/100 for i in range(1, 16)],
+    "min_samples": [i for i in range(3, 14)]
+}</p>
+<h1 id="a-lista-validate_params-armazena-apenas-os-pares-de-par&#226;metros-que-atendem-as-condi&#231;&#245;es-descritas-anteriormente">a lista validate_params armazena apenas os pares de par&#226;metros que atendem as condi&#231;&#245;es descritas anteriormente<a class="anchor-link" href="#a-lista-validate_params-armazena-apenas-os-pares-de-par&#226;metros-que-atendem-as-condi&#231;&#245;es-descritas-anteriormente">&#182;</a></h1><p>validated_params = []</p>
+<h1 id="iteramos-por-todas-as-poss&#237;veis-combina&#231;&#245;es-de-par&#226;metros-e-testamos-as-condi&#231;&#245;es">iteramos por todas as poss&#237;veis combina&#231;&#245;es de par&#226;metros e testamos as condi&#231;&#245;es<a class="anchor-link" href="#iteramos-por-todas-as-poss&#237;veis-combina&#231;&#245;es-de-par&#226;metros-e-testamos-as-condi&#231;&#245;es">&#182;</a></h1><p>for epsx in dbs_parameters["eps"]:
+    j = 0
+    for min_sample in dbs_parameters["min_samples"]:
+        dbs = DBSCAN(eps=epsx, min_samples=min_sample).fit(X)
+        dbs<em>labels = dbs.labels</em></p>
+
+<pre><code>    # a primeira condição verifica se a label do centro da "banana" superior é diferente da label do centro da "banana" inferior
+    # a segunda condição verifica se não foram geradas mais de 8 classes
+    if(dbs_labels[banana_sup_index] != dbs_labels[banana_inf_index] and len(np.unique(dbs_labels)) &lt;= 8):
+        validated_params.append([epsx, min_sample])</code></pre>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Os</span> <span class="n">pares</span> <span class="n">de</span> <span class="n">parâmetros</span> <span class="n">que</span> <span class="n">atendem</span> <span class="k">as</span> <span class="n">condições</span> <span class="n">descritas</span> <span class="n">anteriormente</span> <span class="n">são</span> <span class="n">exibidos</span><span class="o">.</span> <span class="n">Nota</span><span class="o">-</span><span class="n">se</span> <span class="n">que</span> <span class="n">muitas</span> <span class="n">combinações</span> <span class="n">são</span> <span class="n">ignoradas</span> <span class="n">por</span> <span class="n">não</span> <span class="n">atenderem</span> <span class="n">aos</span> <span class="n">requisitos</span> <span class="n">levantados</span> <span class="n">previamente</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>for val_params in validated_params:
+    plt.plot(val_params[0], val_params[1], "k.")
+    plt.xlabel("Tamanho do raio")
+    plt.ylabel("Número mínimo de pontos")
+plt.show()</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="n">partir</span> <span class="n">da</span> <span class="n">lista</span> <span class="n">de</span> <span class="n">parâmetros</span> <span class="n">que</span> <span class="n">atendem</span> <span class="n">aos</span> <span class="n">requisitos</span> <span class="n">levantados</span><span class="p">,</span> <span class="n">realiza</span><span class="o">-</span><span class="n">se</span> <span class="n">o</span> <span class="n">mesmo</span> <span class="n">procedimento</span> <span class="n">realizado</span> <span class="n">anteriormente</span> <span class="n">para</span> <span class="n">extrair</span> <span class="n">a</span> <span class="n">pontuação</span> <span class="n">do</span> <span class="n">classificador</span> <span class="n">para</span> <span class="n">cada</span> <span class="n">combinação</span> <span class="n">de</span> <span class="n">parâmetros</span><span class="p">,</span> <span class="n">conforme</span> <span class="n">cada</span> <span class="n">métrica</span> <span class="n">de</span> <span class="n">avaliação</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a lista é convertida em array do numpy</span>
+<span class="n">validated_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">validated_params</span><span class="p">)</span>
+
+<span class="n">unique_eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">validated_params</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> 
+<span class="n">unique_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">validated_params</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> 
+
+<span class="n">matrix_size</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">unique_eps</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">unique_samples</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="n">dbs_score_matrix_cohesion</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span>
+<span class="n">dbs_score_matrix_separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span>
+<span class="n">dbs_score_matrix_entropy</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span>
+<span class="n">dbs_score_matrix_silhouette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">matrix_size</span><span class="p">)</span>
 
 <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">n_cluster</span> <span class="ow">in</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s2">&quot;n_clusters&quot;</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">eps</span> <span class="ow">in</span> <span class="n">unique_eps</span><span class="p">:</span>
     <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s2">&quot;max_iter&quot;</span><span class="p">]:</span>
-        <span class="n">kmc</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_cluster</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">unique_samples</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">[</span><span class="n">eps</span><span class="p">,</span> <span class="n">sample</span><span class="p">]</span> <span class="ow">in</span> <span class="n">validated_params</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+            <span class="n">dbs</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">dbs_labels</span> <span class="o">=</span> <span class="n">dbs</span><span class="o">.</span><span class="n">labels_</span> 
 
-        <span class="n">kmc_labels</span> <span class="o">=</span> <span class="n">kmc</span><span class="o">.</span><span class="n">labels_</span>
+            <span class="n">cohesion</span>    <span class="o">=</span> <span class="n">cohesion_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dbs_labels</span><span class="p">)</span>
+            <span class="n">separation</span>  <span class="o">=</span> <span class="n">separation_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dbs_labels</span><span class="p">)</span>
+            <span class="n">entropy</span>     <span class="o">=</span> <span class="n">entropy_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dbs_labels</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+            <span class="n">silhouette</span>  <span class="o">=</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dbs_labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+            
+            <span class="n">dbs_score_matrix_cohesion</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>     <span class="o">=</span> <span class="n">cohesion</span>
+            <span class="n">dbs_score_matrix_separation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">separation</span>
+            <span class="n">dbs_score_matrix_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>      <span class="o">=</span> <span class="n">entropy</span>
+            <span class="n">dbs_score_matrix_silhouette</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">silhouette</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="c1"># como nem todos os elementos das matrizes de pontuação são válidos, os elementos inválidos são definidos como Infinito</span>
+            <span class="n">dbs_score_matrix_cohesion</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>     <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="n">dbs_score_matrix_separation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="n">dbs_score_matrix_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>      <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="n">dbs_score_matrix_silhouette</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="n">j</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+</pre></div>
 
-        <span class="n">cohesion</span>    <span class="o">=</span> <span class="n">cohesion_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">kmc_labels</span><span class="p">)</span>
-        <span class="n">separation</span>  <span class="o">=</span> <span class="n">separation_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">kmc_labels</span><span class="p">)</span>
-        <span class="n">entropy</span>     <span class="o">=</span> <span class="n">entropy_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">kmc_labels</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
-        <span class="n">silhouette</span>  <span class="o">=</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">kmc_labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
-        
-        <span class="n">kmc_score_matrix_cohesion</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>     <span class="o">=</span> <span class="n">cohesion</span>
-        <span class="n">kmc_score_matrix_separation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">separation</span>
-        <span class="n">kmc_score_matrix_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>      <span class="o">=</span> <span class="n">entropy</span>
-        <span class="n">kmc_score_matrix_silhouette</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">silhouette</span>
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Aqui, os elementos definidos como Infinito são alterados para 99% do valor do menor elemento da matriz. Isso é realizado a fim de facilitar o plot do gráfico tridimensional</span>
+
+<span class="n">dbs_score_matrix_cohesion_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_cohesion</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dbs_score_matrix_cohesion</span><span class="p">)</span><span class="o">*.</span><span class="mi">99</span><span class="p">,</span> <span class="n">dbs_score_matrix_cohesion</span><span class="p">)</span>
+
+<span class="n">dbs_score_matrix_separation_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_separation</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dbs_score_matrix_separation</span><span class="p">)</span><span class="o">*.</span><span class="mi">99</span><span class="p">,</span> <span class="n">dbs_score_matrix_separation</span><span class="p">)</span>
+
+<span class="n">dbs_score_matrix_entropy_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_entropy</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dbs_score_matrix_entropy</span><span class="p">)</span><span class="o">*.</span><span class="mi">99</span><span class="p">,</span> <span class="n">dbs_score_matrix_entropy</span><span class="p">)</span>
+
+<span class="n">dbs_score_matrix_silhouette_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_silhouette</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dbs_score_matrix_silhouette</span><span class="p">)</span><span class="o">*.</span><span class="mi">99</span><span class="p">,</span> <span class="n">dbs_score_matrix_silhouette</span><span class="p">)</span>
+
+<span class="c1"># Já aqui, os elementos Infinito dos classificadores cuja melhor métrica é a máxima são alterados para 0, a fim de não atrapalhar a extração dos melhores parâmetros realizada abaixo</span>
+<span class="n">dbs_score_matrix_separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_separation</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dbs_score_matrix_separation</span><span class="p">)</span>
+<span class="n">dbs_score_matrix_silhouette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dbs_score_matrix_silhouette</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dbs_score_matrix_silhouette</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotScore3D</span><span class="p">(</span><span class="n">unique_samples</span><span class="p">,</span> <span class="n">unique_eps</span><span class="p">,</span> <span class="n">dbs_score_matrix_cohesion_</span><span class="p">,</span> <span class="s2">&quot;DBSCAN - Coesão</span><span class="se">\n</span><span class="s2">(menor = melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamanho do raio&quot;</span><span class="p">,</span> <span class="s2">&quot;Número mínimo de pontos&quot;</span><span class="p">)</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">unique_samples</span><span class="p">,</span> <span class="n">unique_eps</span><span class="p">,</span> <span class="n">dbs_score_matrix_separation_</span><span class="p">,</span> <span class="s2">&quot;DBSCAN - Separação</span><span class="se">\n</span><span class="s2">(maior = melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamanho do raio&quot;</span><span class="p">,</span> <span class="s2">&quot;Número mínimo de pontos&quot;</span><span class="p">)</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">unique_samples</span><span class="p">,</span> <span class="n">unique_eps</span><span class="p">,</span> <span class="n">dbs_score_matrix_entropy_</span><span class="p">,</span> <span class="s2">&quot;DBSCAN - Entropia&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamanho do raio</span><span class="se">\n</span><span class="s2">(menor=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número mínimo de pontos&quot;</span><span class="p">)</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">unique_samples</span><span class="p">,</span> <span class="n">unique_eps</span><span class="p">,</span> <span class="n">dbs_score_matrix_silhouette_</span><span class="p">,</span> <span class="s2">&quot;DBSCAN - Silhueta&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamanho do raio</span><span class="se">\n</span><span class="s2">(maior=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número mínimo de pontos&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>DBSCAN
+----------------------------------------------------------------------
+COESÃO:
+A melhor pontuação (469.6426328904717) foi obtida pelos parâmetros:
+ 0.08 tamanho de raio e 13.0 número mínimo de pontos.
+
+SEPARAÇÃO:
+A melhor pontuação (2323.3170289974073) foi obtida pelos parâmetros:
+ 0.08 tamanho de raio e 3.0 número mínimo de pontos.
+
+ENTROPIA:
+A melhor pontuação (0.12317248547937495) foi obtida pelos parâmetros:
+ 0.11 tamanho de raio e 10.0 número mínimo de pontos.
+
+SILHUETA:
+A melhor pontuação (0.2516764424216868) foi obtida pelos parâmetros:
+ 0.11 tamanho de raio e 10.0 número mínimo de pontos.
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/dbscan_cohesion.png" width=300/> </td>
+            <td> <img src="./images/dbscan_separation.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/dbscan_entropy.png" width=300/> </td>
+            <td> <img src="./images/dbscan_silhouette.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="O-funcionamento-dessa-c&#233;lula-&#233;-o-mesmo-de-sua-c&#233;lula-equivalente-do-KMeans">O funcionamento dessa c&#233;lula &#233; o mesmo de sua c&#233;lula equivalente do KMeans<a class="anchor-link" href="#O-funcionamento-dessa-c&#233;lula-&#233;-o-mesmo-de-sua-c&#233;lula-equivalente-do-KMeans">&#182;</a></h1><h1 id="Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">Definimos o tamanho das matrizes que armazenam as pontua&#231;&#245;es<a class="anchor-link" href="#Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">&#182;</a></h1><p>template_shape = np.shape(dbs_score_matrix_cohesion)</p>
+<h1 id="Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">Para cada m&#233;todo de avalia&#231;&#227;o, definimos a melhor pontua&#231;&#227;o para aquele m&#233;todo.<a class="anchor-link" href="#Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">&#182;</a></h1><h1 id="Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">Para Separa&#231;&#227;o e Silhueta, as melhores pontua&#231;&#245;es s&#227;o as maiores.<a class="anchor-link" href="#Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">&#182;</a></h1><h1 id="J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">J&#225; para Coes&#227;o e Entropia, s&#227;o as menores.<a class="anchor-link" href="#J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">&#182;</a></h1><p>maxScore_cohesion_dbs   = np.min(dbs_score_matrix_cohesion)
+minScore_separation_dbs = np.max(dbs_score_matrix_separation)
+minScore_entropy_dbs    = np.min(dbs_score_matrix_entropy)
+maxScore_silhouette_dbs = np.max(dbs_score_matrix_silhouette)</p>
+<h1 id="Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">Identificada a melhor pontua&#231;&#227;o, acessamos seu &#237;ndice na matriz de pontua&#231;&#245;es para definir quais par&#226;metros o originaram<a class="anchor-link" href="#Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">&#182;</a></h1><p>index_cohesion      = np.unravel_index(np.argmin(dbs_score_matrix_cohesion), template_shape)
+index_separation    = np.unravel_index(np.argmax(dbs_score_matrix_separation), template_shape)
+index_entropy       = np.unravel_index(np.argmin(dbs_score_matrix_entropy), template_shape)
+index_silhouette    = np.unravel_index(np.argmax(dbs_score_matrix_silhouette), template_shape)</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">DETERMINA MELHORES PAR&#194;METROS PARA CADA M&#201;TRICA DE AVALIA&#199;&#195;O<a class="anchor-link" href="#DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>bestEps_cohesion            = unique_eps[index_cohesion[0]]
+bestMinSamples_cohesion     = unique_samples[index_cohesion[1]]</p>
+<p>bestEps_separation          = unique_eps[index_separation[0]]
+bestMinSamples_separation   = unique_samples[index_separation[1]]</p>
+<p>bestEps_entropy             = unique_eps[index_entropy[0]]
+bestMinSamples_entropy      = unique_samples[index_entropy[1]]</p>
+<p>bestEps_silhouette          = unique_eps[index_silhouette[0]]
+bestMinSamples_silhouette   = unique_samples[index_silhouette[1]]</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>print("DBSCAN")
+print("-"*70)</p>
+<h1 id="Coes&#227;o">Coes&#227;o<a class="anchor-link" href="#Coes&#227;o">&#182;</a></h1><p>print(f"COESÃO:\nA melhor pontuação ({maxScore_cohesion_dbs}) foi obtida pelos parâmetros:\n {bestEps_cohesion} tamanho de raio e {bestMinSamples_cohesion} número mínimo de pontos.\n")</p>
+<h1 id="Separa&#231;&#227;o">Separa&#231;&#227;o<a class="anchor-link" href="#Separa&#231;&#227;o">&#182;</a></h1><p>print(f"SEPARAÇÃO:\nA melhor pontuação ({minScore_separation_dbs}) foi obtida pelos parâmetros:\n {bestEps_separation} tamanho de raio e {bestMinSamples_separation} número mínimo de pontos.\n")</p>
+<h1 id="Entropia">Entropia<a class="anchor-link" href="#Entropia">&#182;</a></h1><p>print(f"ENTROPIA:\nA melhor pontuação ({minScore_entropy_dbs}) foi obtida pelos parâmetros:\n {bestEps_entropy} tamanho de raio e {bestMinSamples_entropy} número mínimo de pontos.\n")</p>
+<h1 id="Silhueta">Silhueta<a class="anchor-link" href="#Silhueta">&#182;</a></h1><p>print(f"SILHUETA:\nA melhor pontuação ({maxScore_silhouette_dbs}) foi obtida pelos parâmetros:\n {bestEps_silhouette} tamanho de raio e {bestMinSamples_silhouette} número mínimo de pontos.\n")</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A partir dos gráficos gerados e dos resultados exibidos, pode-se observar, no caso do DBSCAN, que:</p>
+<ul>
+<li>Coesão e Separação apresentam gráficos ligeiramente semelhantes, com picos e vales em posições similares;</li>
+<li>A Silhueta mostra, pelo seu gráfico, ser uma ocmbinação da Separação e Silhueta, visto que seus picos e vales correspondem ora a picos e vales da Coesão, ora da Silhueta;</li>
+<li>A Entropia apresenta um pico que representa uma região de entropia extremamente elevada, mas mantém valores baixos para as demais combinações de parâmetros;</li>
+<li>Não houve um consenso entre as diferentes métricas de quais seriam os melhores parâmetros. Ainda que Entropia e Silhueta tenham chegado aos mesmo parâmetros, as demais métricas chegaram a valores significativamente distintos.</li>
+</ul>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">---</span>
+<span class="c1">## AGNES</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">linkage_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;ward&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;complete&quot;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span>
+<span class="p">}</span>
+
+<span class="n">agc_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_clusters&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">)],</span>
+    <span class="s1">&#39;linkage&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">cluster_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">linkage_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">agc_score_matrix_cohesion</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">linkage_size</span><span class="p">))</span>
+<span class="n">agc_score_matrix_separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">linkage_size</span><span class="p">))</span>
+<span class="n">agc_score_matrix_entropy</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">linkage_size</span><span class="p">))</span>
+<span class="n">agc_score_matrix_silhouette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">linkage_size</span><span class="p">))</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">n_cluster</span> <span class="ow">in</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">]:</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">linkage</span> <span class="ow">in</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">]:</span>
+        <span class="n">agc</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">linkage</span><span class="o">=</span><span class="n">linkage_dict</span><span class="p">[</span><span class="n">linkage</span><span class="p">],</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">n_cluster</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># agc_labels = np.where(agc.labels_ == 1, 0, 1)</span>
+        <span class="n">agc_labels</span> <span class="o">=</span> <span class="n">agc</span><span class="o">.</span><span class="n">labels_</span> 
+
+        <span class="n">cohesion</span>    <span class="o">=</span> <span class="n">cohesion_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">)</span>
+        <span class="n">separation</span>  <span class="o">=</span> <span class="n">separation_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">)</span>
+        <span class="n">entropy</span>     <span class="o">=</span> <span class="n">entropy_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">silhouette</span>  <span class="o">=</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+
+        <span class="n">agc_score_matrix_cohesion</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>     <span class="o">=</span> <span class="n">cohesion</span>
+        <span class="n">agc_score_matrix_separation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">separation</span>
+        <span class="n">agc_score_matrix_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>      <span class="o">=</span> <span class="n">entropy</span>
+        <span class="n">agc_score_matrix_silhouette</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>   <span class="o">=</span> <span class="n">silhouette</span>
 
         <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -14541,81 +15109,19 @@ a.anchor-link {
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotScore3D</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">],</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">kmc_score_matrix_cohesion</span><span class="p">,</span> <span class="s2">&quot;Cohesion&quot;</span><span class="p">)</span>
-
-<span class="n">plotScore3D</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">],</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">kmc_score_matrix_separation</span><span class="p">,</span> <span class="s2">&quot;Separation&quot;</span><span class="p">)</span>
-
-<span class="n">plotScore3D</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">],</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">kmc_score_matrix_entropy</span><span class="p">,</span> <span class="s2">&quot;Entropy&quot;</span><span class="p">)</span>
-
-<span class="n">plotScore3D</span><span class="p">(</span><span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">],</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">kmc_score_matrix_silhouette</span><span class="p">,</span> <span class="s2">&quot;Silhouette&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set the template data</span>
-<span class="n">template_shape</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">kmc_score_matrix_cohesion</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotScore3D</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">],</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">agc_score_matrix_cohesion</span><span class="p">,</span> <span class="s2">&quot;AGNES - Coesão</span><span class="se">\n</span><span class="s2">(maior=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número de clusters&quot;</span><span class="p">,</span> <span class="s2">&quot;Similaridade</span><span class="se">\n</span><span class="s2">0-ward, 1-complete, 2-single&quot;</span><span class="p">)</span>
 
-<span class="c1"># Get the best score to each evaluation method</span>
-<span class="n">maxScore_cohesion</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">kmc_score_matrix_cohesion</span><span class="p">)</span>
-<span class="n">minScore_separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">kmc_score_matrix_separation</span><span class="p">)</span>
-<span class="n">minScore_entropy</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">kmc_score_matrix_entropy</span><span class="p">)</span>
-<span class="n">maxScore_silhouette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">kmc_score_matrix_silhouette</span><span class="p">)</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">],</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">agc_score_matrix_separation</span><span class="p">,</span> <span class="s2">&quot;AGNES - Separação</span><span class="se">\n</span><span class="s2">(menor=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número de clusters&quot;</span><span class="p">,</span> <span class="s2">&quot;Similaridade</span><span class="se">\n</span><span class="s2">0-ward, 1-complete, 2-single&quot;</span><span class="p">)</span>
 
-<span class="c1"># Get the index of this score, so we can access the specific</span>
-<span class="c1"># parameter.</span>
-<span class="n">index_cohesion</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">kmc_score_matrix_cohesion</span><span class="p">),</span> <span class="n">template_shape</span><span class="p">)</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">],</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">agc_score_matrix_entropy</span><span class="p">,</span> <span class="s2">&quot;AGNES - Entropia</span><span class="se">\n</span><span class="s2">(menor=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número de clusters&quot;</span><span class="p">,</span> <span class="s2">&quot;Similaridade</span><span class="se">\n</span><span class="s2">0-ward, 1-complete, 2-single&quot;</span><span class="p">)</span>
 
-<span class="n">index_separation</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">kmc_score_matrix_separation</span><span class="p">),</span> <span class="n">template_shape</span><span class="p">)</span>
-
-<span class="n">index_entropy</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">kmc_score_matrix_entropy</span><span class="p">),</span> <span class="n">template_shape</span><span class="p">)</span>
-
-<span class="n">index_silhouette</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">kmc_score_matrix_silhouette</span><span class="p">),</span> <span class="n">template_shape</span><span class="p">)</span>
-
-<span class="c1"># -------------------------------------------------------------------</span>
-<span class="c1">#           GET THE BEST PARAMATERS FOR EACH EVALUATION METHOD</span>
-<span class="c1"># -------------------------------------------------------------------</span>
-<span class="n">bestIter_cohesion</span>   <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">][</span><span class="n">index_cohesion</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-<span class="n">bestN_cohesion</span>      <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">][</span><span class="n">index_cohesion</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-
-<span class="n">bestIter_separation</span> <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">][</span><span class="n">index_separation</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-<span class="n">bestN_separation</span>    <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">][</span><span class="n">index_separation</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-
-<span class="n">bestIter_entropy</span>    <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">][</span><span class="n">index_entropy</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-<span class="n">bestN_entropy</span>       <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">][</span><span class="n">index_entropy</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-
-<span class="n">bestIter_silhouette</span> <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">][</span><span class="n">index_silhouette</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-<span class="n">bestN_silhouette</span>    <span class="o">=</span> <span class="n">kmc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">][</span><span class="n">index_silhouette</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-<span class="c1"># -------------------------------------------------------------------</span>
-<span class="c1"># -------------------------------------------------------------------</span>
-
-<span class="c1"># -------------------------------------------------------------------</span>
-<span class="c1"># Cohesion</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;COHESION:</span><span class="se">\n</span><span class="s2">The best score (</span><span class="si">{</span><span class="n">maxScore_cohesion</span><span class="si">}</span><span class="s2">) was acquired by the parameters:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">bestIter_cohesion</span><span class="si">}</span><span class="s2"> iterations and </span><span class="si">{</span><span class="n">bestN_cohesion</span><span class="si">}</span><span class="s2"> clusters.&quot;</span><span class="p">)</span>
-
-<span class="c1"># Separation</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SEPARATION:</span><span class="se">\n</span><span class="s2">The best score (</span><span class="si">{</span><span class="n">minScore_separation</span><span class="si">}</span><span class="s2">) was acquired by the parameters:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">bestIter_separation</span><span class="si">}</span><span class="s2"> iterations and </span><span class="si">{</span><span class="n">bestN_separation</span><span class="si">}</span><span class="s2"> clusters.&quot;</span><span class="p">)</span>
-
-<span class="c1"># Entropy</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ENTROPY:</span><span class="se">\n</span><span class="s2">The best score (</span><span class="si">{</span><span class="n">minScore_entropy</span><span class="si">}</span><span class="s2">) was acquired by the parameters:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">bestIter_entropy</span><span class="si">}</span><span class="s2"> iterations and </span><span class="si">{</span><span class="n">bestN_entropy</span><span class="si">}</span><span class="s2"> clusters.&quot;</span><span class="p">)</span>
-
-<span class="c1"># Silhouette</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SILHOUETTE:</span><span class="se">\n</span><span class="s2">The best score (</span><span class="si">{</span><span class="n">maxScore_silhouette</span><span class="si">}</span><span class="s2">) was acquired by the parameters:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">bestIter_silhouette</span><span class="si">}</span><span class="s2"> iterations and </span><span class="si">{</span><span class="n">bestN_silhouette</span><span class="si">}</span><span class="s2"> clusters.&quot;</span><span class="p">)</span>
-<span class="c1"># -------------------------------------------------------------------</span>
+<span class="n">plotScore3D</span><span class="p">(</span><span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;linkage&#39;</span><span class="p">],</span> <span class="n">agc_parameters</span><span class="p">[</span><span class="s1">&#39;n_clusters&#39;</span><span class="p">],</span> <span class="n">agc_score_matrix_silhouette</span><span class="p">,</span> <span class="s2">&quot;AGNES - Silhueta</span><span class="se">\n</span><span class="s2">(maior=melhor)&quot;</span><span class="p">,</span> <span class="s2">&quot;Número de clusters&quot;</span><span class="p">,</span> <span class="s2">&quot;Similaridade</span><span class="se">\n</span><span class="s2">0-ward, 1-complete, 2-single&quot;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14635,20 +15141,162 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>COHESION:
-The best score (1734431.225847852) was acquired by the parameters:
- 1 iterations and 2 clusters.
-SEPARATION:
-The best score (6539106.5643255655) was acquired by the parameters:
- 1 iterations and 2 clusters.
-ENTROPY:
-The best score (0.18823411936912743) was acquired by the parameters:
- 5 iterations and 2 clusters.
-SILHOUETTE:
-The best score (0.475107060985967) was acquired by the parameters:
- 1 iterations and 2 clusters.
+<pre>AGNES
+----------------------------------------------------------------------
+COESÃO:
+A melhor pontuação (304.74199526468897) foi obtida pelos parâmetros:
+ 8 número de clusters e ward medida de similaridade.
+
+SEPARAÇÃO:
+A melhor pontuação (2860.187075436765) foi obtida pelos parâmetros:
+ 8 número de clusters e ward medida de similaridade.
+
+ENTROPIA:
+A melhor pontuação (0.005703878868730569) foi obtida pelos parâmetros:
+ 2 número de clusters e single medida de similaridade.
+
+SILHUETA:
+A melhor pontuação (0.4651893317755256) foi obtida pelos parâmetros:
+ 2 número de clusters e ward medida de similaridade.
+
 </pre>
 </div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/agnes_cohesion.png" width=300/> </td>
+            <td> <img src="./images/agnes_separation.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+<div align="center">
+    <table>
+        <tr>
+            <td> <img src="./images/agnes_entropy.png" width=300/> </td>
+            <td> <img src="./images/agnes_silhouette.png" width=300/> </td>
+        </tr>
+    </table>
+</div>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="O-funcionamento-dessa-c&#233;lula-&#233;-o-mesmo-de-sua-c&#233;lula-equivalente-do-KMeans">O funcionamento dessa c&#233;lula &#233; o mesmo de sua c&#233;lula equivalente do KMeans<a class="anchor-link" href="#O-funcionamento-dessa-c&#233;lula-&#233;-o-mesmo-de-sua-c&#233;lula-equivalente-do-KMeans">&#182;</a></h1><h1 id="Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">Definimos o tamanho das matrizes que armazenam as pontua&#231;&#245;es<a class="anchor-link" href="#Definimos-o-tamanho-das-matrizes-que-armazenam-as-pontua&#231;&#245;es">&#182;</a></h1><p>template_shape      = np.shape(agc_score_matrix_cohesion)</p>
+<h1 id="Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">Para cada m&#233;todo de avalia&#231;&#227;o, definimos a melhor pontua&#231;&#227;o para aquele m&#233;todo.<a class="anchor-link" href="#Para-cada-m&#233;todo-de-avalia&#231;&#227;o,-definimos-a-melhor-pontua&#231;&#227;o-para-aquele-m&#233;todo.">&#182;</a></h1><h1 id="Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">Para Separa&#231;&#227;o e Silhueta, as melhores pontua&#231;&#245;es s&#227;o as maiores.<a class="anchor-link" href="#Para-Separa&#231;&#227;o-e-Silhueta,-as-melhores-pontua&#231;&#245;es-s&#227;o-as-maiores.">&#182;</a></h1><h1 id="J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">J&#225; para Coes&#227;o e Entropia, s&#227;o as menores.<a class="anchor-link" href="#J&#225;-para-Coes&#227;o-e-Entropia,-s&#227;o-as-menores.">&#182;</a></h1><p>maxScore_cohesion_ag   = np.min(agc_score_matrix_cohesion)
+minScore_separation_ag = np.max(agc_score_matrix_separation)
+minScore_entropy_ag    = np.min(agc_score_matrix_entropy)
+maxScore_silhouette_ag = np.max(agc_score_matrix_silhouette)</p>
+<h1 id="Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">Identificada a melhor pontua&#231;&#227;o, acessamos seu &#237;ndice na matriz de pontua&#231;&#245;es para definir quais par&#226;metros o originaram<a class="anchor-link" href="#Identificada-a-melhor-pontua&#231;&#227;o,-acessamos-seu-&#237;ndice-na-matriz-de-pontua&#231;&#245;es-para-definir-quais-par&#226;metros-o-originaram">&#182;</a></h1><p>index_cohesion      = np.unravel_index(np.argmin(agc_score_matrix_cohesion), template_shape)
+index_separation    = np.unravel_index(np.argmax(agc_score_matrix_separation), template_shape)
+index_entropy       = np.unravel_index(np.argmin(agc_score_matrix_entropy), template_shape)
+index_silhouette    = np.unravel_index(np.argmax(agc_score_matrix_silhouette), template_shape)</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">DETERMINA MELHORES PAR&#194;METROS PARA CADA M&#201;TRICA DE AVALIA&#199;&#195;O<a class="anchor-link" href="#DETERMINA-MELHORES-PAR&#194;METROS-PARA-CADA-M&#201;TRICA-DE-AVALIA&#199;&#195;O">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>bestNAg_cohesion            = agc_parameters['n_clusters'][index_cohesion[0]]
+bestLinkage_cohesion     = agc_parameters['linkage'][index_cohesion[1]]</p>
+<p>bestNAg_separation          = agc_parameters['n_clusters'][index_separation[0]]
+bestLinkage_separation   = agc_parameters['linkage'][index_separation[1]]</p>
+<p>bestNAg_entropy             = agc_parameters['n_clusters'][index_entropy[0]]
+bestLinkage_entropy      = agc_parameters['linkage'][index_entropy[1]]</p>
+<p>bestNAg_silhouette          = agc_parameters['n_clusters'][index_silhouette[0]]
+bestLinkage_silhouette   = agc_parameters['linkage'][index_silhouette[1]]</p>
+<h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><h1 id="-------------------------------------------------------------------">-------------------------------------------------------------------<a class="anchor-link" href="#-------------------------------------------------------------------">&#182;</a></h1><p>print("AGNES")
+print("-"*70)</p>
+<h1 id="Coes&#227;o">Coes&#227;o<a class="anchor-link" href="#Coes&#227;o">&#182;</a></h1><p>print(f"COESÃO:\nA melhor pontuação ({maxScore_cohesion_ag}) foi obtida pelos parâmetros:\n {bestNAg_cohesion} número de clusters e {linkage_dict[bestLinkage_cohesion]} medida de similaridade.\n")</p>
+<h1 id="Separa&#231;&#227;o">Separa&#231;&#227;o<a class="anchor-link" href="#Separa&#231;&#227;o">&#182;</a></h1><p>print(f"SEPARAÇÃO:\nA melhor pontuação ({minScore_separation_ag}) foi obtida pelos parâmetros:\n {bestNAg_separation} número de clusters e {linkage_dict[bestLinkage_separation]} medida de similaridade.\n")</p>
+<h1 id="Entropia">Entropia<a class="anchor-link" href="#Entropia">&#182;</a></h1><p>print(f"ENTROPIA:\nA melhor pontuação ({minScore_entropy_ag}) foi obtida pelos parâmetros:\n {bestNAg_entropy} número de clusters e {linkage_dict[bestLinkage_entropy]} medida de similaridade.\n")</p>
+<h1 id="Silhueta">Silhueta<a class="anchor-link" href="#Silhueta">&#182;</a></h1><p>print(f"SILHUETA:\nA melhor pontuação ({maxScore_silhouette_ag}) foi obtida pelos parâmetros:\n {bestNAg_silhouette} número de clusters e {linkage_dict[bestLinkage_silhouette]} medida de similaridade.\n")</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">----</span>
+
+<span class="c1">## Comparação dos classificadores</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>KMeans</th>
+      <th>DBScan</th>
+      <th>Agnes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Coesão</th>
+      <td>277.812</td>
+      <td>469.643</td>
+      <td>304.742</td>
+    </tr>
+    <tr>
+      <th>Separação</th>
+      <td>2862.928</td>
+      <td>2323.317</td>
+      <td>2860.187</td>
+    </tr>
+    <tr>
+      <th>Entropia</th>
+      <td>0.779</td>
+      <td>0.123</td>
+      <td>0.006</td>
+    </tr>
+    <tr>
+      <th>Silhueta</th>
+      <td>0.475</td>
+      <td>0.252</td>
+      <td>0.465</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 </div>
@@ -14658,35 +15306,25 @@ The best score (0.475107060985967) was acquired by the parameters:
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># -------------------------------------------------------------------</span>
-<span class="c1">#                              OVERALL VOTES </span>
-<span class="c1"># -------------------------------------------------------------------</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cohesion_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">maxScore_cohesion_kmeans</span><span class="p">,</span><span class="n">maxScore_cohesion_dbs</span><span class="p">,</span><span class="n">maxScore_cohesion_ag</span><span class="p">]</span>
 
-<span class="n">bestIter</span> <span class="o">=</span> <span class="p">[</span><span class="n">bestIter_cohesion</span><span class="p">,</span> <span class="n">bestIter_entropy</span><span class="p">,</span> <span class="n">bestIter_separation</span><span class="p">,</span> <span class="n">bestIter_silhouette</span><span class="p">]</span>
-<span class="n">bestN</span> <span class="o">=</span> <span class="p">[</span><span class="n">bestN_cohesion</span><span class="p">,</span> <span class="n">bestN_entropy</span><span class="p">,</span> <span class="n">bestN_separation</span><span class="p">,</span> <span class="n">bestN_silhouette</span><span class="p">]</span>
+<span class="n">separation_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">minScore_separation_kmeans</span><span class="p">,</span><span class="n">minScore_separation_dbs</span><span class="p">,</span><span class="n">minScore_separation_ag</span><span class="p">]</span>
 
-<span class="n">bestIterValues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">bestIter</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="n">best_idx_iter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">bestIterValues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">goatIterValue</span> <span class="o">=</span> <span class="n">bestIterValues</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">best_idx_iter</span><span class="p">]</span>
-<span class="n">goatIterCounts</span> <span class="o">=</span> <span class="n">bestIterValues</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">best_idx_iter</span><span class="p">]</span>
+<span class="n">entropy_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">minScore_entropy_kmeans</span><span class="p">,</span><span class="n">minScore_entropy_dbs</span><span class="p">,</span><span class="n">minScore_entropy_ag</span><span class="p">]</span>
 
-<span class="n">bestNValues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">bestN</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="n">best_idx_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">bestNValues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">goatNValue</span> <span class="o">=</span> <span class="n">bestNValues</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">best_idx_n</span><span class="p">]</span>
-<span class="n">goatNCounts</span> <span class="o">=</span> <span class="n">bestNValues</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">best_idx_n</span><span class="p">]</span>
+<span class="n">silhouette_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">maxScore_silhouette_kmeans</span><span class="p">,</span><span class="n">maxScore_silhouette_dbs</span><span class="p">,</span><span class="n">maxScore_silhouette_ag</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2"> Melhor Parâmetro Por Votação &quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Por </span><span class="si">{</span><span class="n">goatIterCounts</span><span class="si">}</span><span class="s2"> votos foi definido que </span><span class="si">{</span><span class="n">goatIterValue</span><span class="si">}</span><span class="s2"> é a melhor quantidade de iterações&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Por </span><span class="si">{</span><span class="n">goatNCounts</span><span class="si">}</span><span class="s2"> votos foi definido que </span><span class="si">{</span><span class="n">goatNValue</span><span class="si">}</span><span class="s2"> é o melhor número de clusters&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">cohesion_row</span><span class="p">,</span>
+    <span class="n">separation_row</span><span class="p">,</span>
+    <span class="n">entropy_row</span><span class="p">,</span>
+    <span class="n">silhouette_row</span>
+<span class="p">]</span>
 
-<span class="c1"># -------------------------------------------------------------------</span>
-<span class="c1"># -------------------------------------------------------------------</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">storage</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Coesão&quot;</span><span class="p">,</span> <span class="s2">&quot;Separação&quot;</span><span class="p">,</span> <span class="s2">&quot;Entropia&quot;</span><span class="p">,</span> <span class="s2">&quot;Silhueta&quot;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;KMeans&quot;</span><span class="p">,</span> <span class="s2">&quot;DBScan&quot;</span><span class="p">,</span> <span class="s2">&quot;Agnes&quot;</span><span class="p">])</span>
 </pre></div>
 
      </div>
@@ -14706,12 +15344,7 @@ The best score (0.475107060985967) was acquired by the parameters:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>------------------------------------------------------------
-		 Melhor Parâmetro Por Votação 
-------------------------------------------------------------
-Por 1 votos foi definido que 5 é a melhor quantidade de iterações
-Por 4 votos foi definido que 2 é o melhor número de clusters
-------------------------------------------------------------
+<pre>1595.9104103638379 2393.0331699050357 0.3179351050067138
 </pre>
 </div>
 </div>
@@ -14720,22 +15353,82 @@ Por 4 votos foi definido que 2 é o melhor número de clusters
 
 </div>
 
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>cohesion    = cohesion_score(X, label)
+separation  = separation_score(X, label)
+silhouette  = silhouette_score(X, label, metric='euclidean')</p>
+<p>print(cohesion, separation, silhouette)</p>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Will have to store the bestCentroid and bestLabels</span>
-<span class="n">kmc</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">goatNValue</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">goatIterValue</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">De</span> <span class="n">acordo</span> <span class="n">com</span> <span class="n">os</span> <span class="n">critérios</span> <span class="n">de</span> <span class="n">Coesão</span><span class="p">,</span> <span class="n">Separação</span> <span class="n">e</span> <span class="n">Entropia</span><span class="p">,</span> <span class="n">o</span> <span class="n">melhor</span> <span class="n">classificador</span> <span class="n">é</span> <span class="n">o</span> <span class="n">Agnes</span><span class="p">,</span> <span class="n">cuja</span> <span class="n">classificação</span> <span class="n">é</span> <span class="n">exibida</span> <span class="n">abaixo</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>agc = AgglomerativeClustering(linkage="ward", n_clusters=2).fit(X)
+agc<em>labels = agc.labels</em></p>
+<p>color = ["r.", "g.", "b.", "y.", "m.", "c.", "w.", "k."]
+for i in range(len(X)):
+    plt.plot(X[i][0], X[i][1], color[agc_labels[i]])
+plt.title("AGNES")
+plt.show()</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div align="center">
+    <img src="./images/best_agnes.png" width=300/>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Já</span> <span class="n">de</span> <span class="n">acordo</span> <span class="n">com</span> <span class="n">o</span> <span class="n">critério</span> <span class="n">de</span> <span class="n">Silhueta</span><span class="p">,</span> <span class="n">o</span> <span class="n">melhor</span> <span class="n">classificador</span> <span class="n">é</span> <span class="n">o</span> <span class="n">Kmeans</span><span class="p">,</span> <span class="n">cuja</span> <span class="n">classificação</span> <span class="n">é</span> <span class="n">exibida</span> <span class="n">abaixo</span><span class="o">.</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kmc</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 <span class="n">kmc_labels</span> <span class="o">=</span> <span class="n">kmc</span><span class="o">.</span><span class="n">labels_</span>
 <span class="n">kmc_centroids</span> <span class="o">=</span> <span class="n">kmc</span><span class="o">.</span><span class="n">cluster_centers_</span>
 
-<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;g.&quot;</span><span class="p">,</span> <span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;c.&quot;</span><span class="p">,</span> <span class="s2">&quot;b.&quot;</span><span class="p">]</span> <span class="c1">## No caso de ter até 4 classes</span>
+<span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;g.&quot;</span><span class="p">,</span> <span class="s2">&quot;b.&quot;</span><span class="p">,</span> <span class="s2">&quot;y.&quot;</span><span class="p">,</span> <span class="s2">&quot;m.&quot;</span><span class="p">,</span> <span class="s2">&quot;c.&quot;</span><span class="p">,</span> <span class="s2">&quot;w.&quot;</span><span class="p">,</span> <span class="s2">&quot;k.&quot;</span><span class="p">]</span>
+
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="n">kmc_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">kmc_centroids</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kmc_centroids</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">kmc_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="n">kmc_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">centroid</span> <span class="ow">in</span> <span class="n">kmc_centroids</span><span class="p">:</span>
+   <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;navy&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> 
+
+<span class="c1"># [plt.scatter(kmc_centroids[i], marker=&#39;x&#39;, color=&#39;black&#39;, linewidths=50) for i in range(len(kmc_centrois))]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;KMeans&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -14747,267 +15440,29 @@ Por 4 votos foi definido que 2 é o melhor número de clusters
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<hr>
-<h2 id="DBScan">DBScan<a class="anchor-link" href="#DBScan">&#182;</a></h2>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dbs_parameters</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;eps&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">)],</span>
-    <span class="s2">&quot;min_samples&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
-<span class="p">}</span>
-
-<span class="n">dbs_score_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;eps&#39;</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;min_samples&#39;</span><span class="p">])))</span>
-
-<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">epsx</span> <span class="ow">in</span> <span class="n">dbs_parameters</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]:</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">min_sample</span> <span class="ow">in</span> <span class="n">dbs_parameters</span><span class="p">[</span><span class="s2">&quot;min_samples&quot;</span><span class="p">]:</span>
-        <span class="n">dbs</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsx</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">min_sample</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">dbs_labels</span> <span class="o">=</span> <span class="n">dbs</span><span class="o">.</span><span class="n">labels_</span>
-        
-        <span class="c1"># silhouette = silhouette_score(X, dbs_labels, metric=&#39;euclidean&#39;)</span>
-        <span class="c1"># dbs_score_matrix[i, j] = silhouette</span>
-
-        <span class="n">j</span><span class="o">+=</span><span class="mi">1</span>
-    <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
-</pre></div>
-
-     </div>
+<div align="center">
+    <img src="./images/best_kmeans.png" width=300/>
 </div>
 </div>
 </div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-[0 0 0 ... 0 0 0]
-</pre>
-</div>
-</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>equador = .25</p>
+<p>zero = np.zeros(np.shape(kmc_labels))
+um   = np.ones(np.shape(kmc_labels))</p>
+<p>hemisferio_sul   = np.array(np.where(kmc_centroids[:, 1] &lt; equador))
+new_label        = np.where(np.in1d(kmc_labels, hemisferio_sul[0]), zero, um)</p>
+<p>for i in range(len(X)):
+    plt.plot(X[i][0], X[i][1], color[int(new_label[i])], zorder=1)</p>
 
 </div>
-
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotScore3D</span><span class="p">(</span><span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;min_samples&#39;</span><span class="p">],</span> <span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;eps&#39;</span><span class="p">],</span><span class="n">dbs_score_matrix</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">maxScore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dbs_score_matrix</span><span class="p">)</span>
-<span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dbs_score_matrix</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dbs_score_matrix</span><span class="p">))</span>
-<span class="n">bestEps</span> <span class="o">=</span> <span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;eps&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-<span class="n">bestSamples</span> <span class="o">=</span> <span class="n">dbs_parameters</span><span class="p">[</span><span class="s1">&#39;min_samples&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The best score (</span><span class="si">{</span><span class="n">maxScore</span><span class="si">}</span><span class="s2">) was acquired by the parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">bestEps</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">bestSamples</span><span class="si">}</span><span class="s2"> samples&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Will have to store the bestLabels</span>
-<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;g.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;c.&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;b.&quot;</span><span class="p">}</span> <span class="c1">## No caso de ter até 4 classes</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="n">dbs_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">dbs_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Todavia</span><span class="p">,</span> <span class="n">ao</span> <span class="n">observarmos</span> <span class="k">as</span> <span class="n">melhores</span> <span class="n">classificações</span> <span class="n">do</span> <span class="n">classificador</span> <span class="n">DBScan</span><span class="p">,</span> <span class="n">abaixo</span><span class="p">,</span> <span class="n">podemos</span> <span class="n">notar</span> <span class="n">resultados</span> <span class="n">significativamente</span> <span class="n">distintos</span><span class="p">:</span>
 </pre></div>
 
      </div>
@@ -15018,33 +15473,22 @@ Por 4 votos foi definido que 2 é o melhor número de clusters
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<hr>
-<h2 id="AGNES">AGNES<a class="anchor-link" href="#AGNES">&#182;</a></h2>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">agc</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;complete&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<p>dbs = DBSCAN(eps=.11, min_samples=10, n_jobs=-1).fit(X)
+dbs<em>labels = dbs.labels</em></p>
+<p>color = ["r.", "g.", "b.", "y.", "m.", "c.", "w.", "k."]
+for i in range(len(X)):
+    plt.plot(X[i][0], X[i][1], color[dbs_labels[i]])
+plt.title("DBScan")
+plt.show()</p>
 
-<span class="n">agc_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">agc</span><span class="o">.</span><span class="n">labels_</span><span class="p">]</span>
-
-<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;g.&quot;</span><span class="p">,</span> <span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;c.&quot;</span><span class="p">,</span> <span class="s2">&quot;b.&quot;</span><span class="p">]</span> <span class="c1">## No caso de ter até 4 classes</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="n">agc_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">agc_labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">))</span>
-</pre></div>
-
-     </div>
 </div>
 </div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div align="center">
+    <img src="./images/best_dbscan.png" width=300/>
 </div>
-
+</div>
 </div>
 </body>
 
