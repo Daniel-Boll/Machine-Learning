@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\danie\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
+    "python.pythonPath": "/home/mahat/anaconda3/envs/deeplearning/bin/python",
     "jupyter.jupyterServerType": "local"
 }
